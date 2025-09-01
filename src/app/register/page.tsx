@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import BackNav from "../components/BackNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Button } from "../components/Button";
 
 export default function RegisterPage(): JSX.Element {
   const router = useRouter();
@@ -51,7 +52,6 @@ export default function RegisterPage(): JSX.Element {
         return;
       }
 
-      // kalau sukses, simpan token (opsional)
       if (data.access_token) {
         localStorage.setItem("token", data.access_token);
       }
@@ -82,7 +82,7 @@ export default function RegisterPage(): JSX.Element {
             {/* Email */}
             <input
               type="email"
-              placeholder="johndoe@gmail.com"
+              placeholder="Enter Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -92,7 +92,7 @@ export default function RegisterPage(): JSX.Element {
             {/* Username */}
             <input
               type="text"
-              placeholder="johndoe123"
+              placeholder="Create Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -103,7 +103,7 @@ export default function RegisterPage(): JSX.Element {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="********"
+                placeholder="Create Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -122,7 +122,7 @@ export default function RegisterPage(): JSX.Element {
             <div className="relative">
               <input
                 type={showConfirm ? "text" : "password"}
-                placeholder="********"
+                placeholder="Confirm Password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -141,17 +141,9 @@ export default function RegisterPage(): JSX.Element {
             {error && <p className="text-red-400 text-sm">{error}</p>}
 
             {/* Register Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-lg text-white font-semibold mt-2 disabled:opacity-50"
-              style={{
-                background:
-                  "linear-gradient(108.32deg, #62CDCB 24.88%, #4599DB 78.49%)",
-              }}
-            >
+            <Button  type="submit" disabled={loading} className="w-full py-3 rounded-lg text-white font-semibold mt-2 disabled:opacity-50" >
               {loading ? "Registering..." : "Register"}
-            </button>
+            </Button>
           </form>
 
           {/* Link to Login */}

@@ -5,8 +5,8 @@ import { PencilLine } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
 export default function AboutSection() {
-    const { user } = useAuth();
-  
+  const { user, setUser } = useAuth();
+
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -24,10 +24,35 @@ export default function AboutSection() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Updated data:", formData);
-    // TODO: Simpan ke API / database
+  const handleSave = async (): Promise<void> => {
+    try {
+      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+      const res: Response = await fetch(`${BASE_URL}/api/updateProfile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...user, ...formData }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to update profile: ${res.statusText}`);
+      }
+
+      // Adjust type according to your API response shape
+      const data: { success: boolean; message?: string } = await res.json();
+      console.log("Profile updated:", data);
+
+      user && setUser({ ...user, ...formData });
+      setIsEditing(false);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error updating profile:", error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
   };
 
   return (
@@ -50,13 +75,13 @@ export default function AboutSection() {
 
       {/* Mode Tampilan */}
       {!isEditing ? (
-        <div className="space-y-2 text-gray-300">
+        <div className="space-y-3 text-gray-300">
           <p>
-            <span className="font-medium">Display name:</span>{" "}
-            {user?.username}
+            <span className="font-medium">Display name:</span> {user?.username}
           </p>
           <p>
-            <span className="font-medium">Gender:</span> {user?.gender || 'Male'}
+            <span className="font-medium">Gender:</span>{" "}
+            {user?.gender || "Male"}
           </p>
           <p>
             <span className="font-medium">Birthday:</span> {user?.birthday}

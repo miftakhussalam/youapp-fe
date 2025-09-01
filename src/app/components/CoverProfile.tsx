@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 export default function CoverProfile() {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [cover, setCover] = useState("/profile-bg.jpg"); // default cover
+  const [cover, setCover] = useState("/bg-profile.jpg"); // default cover
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

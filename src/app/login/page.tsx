@@ -6,6 +6,7 @@ import BackNav from "../components/BackNav";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
+import { Button } from "../components/Button";
 
 export default function LoginPage(): JSX.Element {
   const router = useRouter();
@@ -75,7 +76,7 @@ export default function LoginPage(): JSX.Element {
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Johndoe@gmail.com"
+                placeholder="Enter Username/Email"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-[#1c2a33] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4599DB]"
               />
@@ -87,7 +88,7 @@ export default function LoginPage(): JSX.Element {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder="Enter Password"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-[#1c2a33] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4599DB]"
               />
@@ -106,17 +107,13 @@ export default function LoginPage(): JSX.Element {
             )}
 
             {/* Login Button */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="w-full py-3 rounded-xl text-white font-semibold shadow-lg disabled:opacity-50"
-              style={{
-                background:
-                  "linear-gradient(108.32deg, #62CDCB 24.88%, #4599DB 78.49%)",
-              }}
             >
               {loading ? "Logging in..." : "Login"}
-            </button>
+            </Button>
           </form>
 
           {/* Register Link */}

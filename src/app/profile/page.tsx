@@ -7,6 +7,8 @@ import CoverProfile from "../components/CoverProfile";
 import { useAuth } from "../hooks/useAuth";
 import { PencilLine } from "lucide-react";
 import AboutSection from "../components/AboutSection";
+import Link from "next/link";
+import InterestSection from "../components/Interest";
 
 interface Profile {
   email: string;
@@ -18,6 +20,7 @@ interface Profile {
 
 export default function ProfilePage(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
+  const [editInterest, setEditInterest] = useState<boolean>(false);
   const { token, setUser, user } = useAuth();
 
   useEffect(() => {
@@ -68,50 +71,36 @@ export default function ProfilePage(): JSX.Element {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen flex-col">
         <p>Profile not found</p>
+        <p className="mt-4 text-center text-gray-300">
+          Have an account?{" "}
+          <Link href="/login" className="text-cyan-400 font-semibold">
+            Login here
+          </Link>
+        </p>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col min-h-screen p-2">
-      {/* Back Navigation */}
-      <BackNav href="/" />
-
-      {/* Profile Section */}
-      <CoverProfile />
-
-      {/* About Section */}
-      {/* <div className="mt-8 bg-[#0E191F] rounded-md p-2 relative">
-        <div className="absolute top-3 right-4">
-          <PencilLine size={20} />
-        </div>
-        <h2 className="text-lg font-semibold mb-2">About</h2>
-        <p className="text-gray-600">
-          {user?.about ?? "Add in your bio to help others know you better"}
-        </p>
-      </div> */}
-
-      <AboutSection />
-
-      {/* Interests Section */}
-      <div className="mt-8 bg-[#0E191F] rounded-md p-2">
-        <h2 className="text-lg font-semibold mb-2">Interests</h2>
-        <div className="flex flex-wrap gap-2">
-          {(user.interests && user.interests.length > 0
-            ? user.interests
-            : []
-          ).map((interest: string) => (
-            <span
-              key={interest}
-              className="px-3 py-1 bg-[#162329] rounded-full text-sm text-white"
-            >
-              {interest}
-            </span>
-          ))}
-        </div>
-      </div>
+      {editInterest ? (
+        <InterestSection
+          editInterest={editInterest}
+          setEditInterest={setEditInterest}
+        />
+      ) : (
+        <>
+          <BackNav href="/" />
+          <CoverProfile />
+          <AboutSection />
+          <InterestSection
+            editInterest={editInterest}
+            setEditInterest={setEditInterest}
+          />
+        </>
+      )}
     </div>
   );
 }
