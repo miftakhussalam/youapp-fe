@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import { AuthProvider } from "./context/AuthContext";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-app-gradient`}>
         <main className="flex min-h-screen flex-col items-center justify-between">
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </main>
       </body>
     </html>

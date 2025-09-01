@@ -4,10 +4,67 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import BackNav from "../components/BackNav";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage(): JSX.Element {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter();
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    if (password !== confirm) {
+      setError("Password and Confirm Password do not match");
+      return;
+    }
+
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+    try {
+      setLoading(true);
+      const res = await fetch(`${BASE_URL}/api/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          username,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Registration failed");
+        return;
+      }
+
+      // kalau sukses, simpan token (opsional)
+      if (data.access_token) {
+        localStorage.setItem("token", data.access_token);
+      }
+
+      // redirect ke profile
+      router.push("/profile");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#0f2027] via-[#203a43] to-[#2c5364] text-white">
@@ -21,31 +78,36 @@ export default function RegisterPage(): JSX.Element {
         <div className="w-full max-w-sm">
           <h1 className="text-2xl font-bold mb-6">Register</h1>
 
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleRegister}>
             {/* Email */}
-            <div className="relative">
-              <input
-                type="email"
-                placeholder="johndoe@gmail.com"
-                className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="johndoe@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              required
+            />
 
             {/* Username */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="johndoe123"
-                className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="johndoe123"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              required
+            />
 
             {/* Password */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                required
               />
               <button
                 type="button"
@@ -61,7 +123,10 @@ export default function RegisterPage(): JSX.Element {
               <input
                 type={showConfirm ? "text" : "password"}
                 placeholder="********"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg bg-black/30 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                required
               />
               <button
                 type="button"
@@ -72,16 +137,20 @@ export default function RegisterPage(): JSX.Element {
               </button>
             </div>
 
+            {/* Error Message */}
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+
             {/* Register Button */}
             <button
               type="submit"
-              className="w-full py-3 rounded-lg text-white font-semibold mt-2"
+              disabled={loading}
+              className="w-full py-3 rounded-lg text-white font-semibold mt-2 disabled:opacity-50"
               style={{
                 background:
                   "linear-gradient(108.32deg, #62CDCB 24.88%, #4599DB 78.49%)",
               }}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
 
