@@ -24,8 +24,6 @@ export default function CoverProfile() {
     fileInputRef.current?.click();
   };
 
-  console.log(user);
-
   return (
     <div className="relative bg-[#162329] rounded-md">
       <Image

@@ -12,8 +12,6 @@ export default function LoginPage(): JSX.Element {
   const router = useRouter();
   const { login } = useAuth();
 
-  console.log(useAuth());
-
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

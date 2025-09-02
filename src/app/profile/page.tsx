@@ -49,7 +49,6 @@ export default function ProfilePage(): JSX.Element {
 
         const result = await res.json();
 
-        console.log("res", result);
         setUser(result.data);
       } catch (err) {
         console.error("Error fetching profile:", err);

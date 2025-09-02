@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { PencilLine } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { formatToDDMMYYYY } from "@/libs/timeFormat";
+interface Profile {
+  email: string;
+  username: string;
+  nama?: string;
+  horoscope?: string;
+  zodiac?: string;
+  interests?: string[];
+  avatar?: string | undefined;
+  about?: string | undefined;
+}
 
 export default function AboutSection() {
   const { user, setUser, token } = useAuth();
@@ -11,7 +22,7 @@ export default function AboutSection() {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     gender: user?.gender || "Male",
-    birthday: user?.birthday || "01 Jan 1990",
+    birthday: formatToDDMMYYYY(user?.birthday) || "01/01/1990",
     horoscope: user?.horoscope || "Capricorn",
     zodiac: user?.zodiac || "Tiger",
     height: user?.height || 170,
@@ -38,7 +49,8 @@ export default function AboutSection() {
       const res: Response = await fetch(`${BASE_URL}/api/updateProfile`, {
         method: "PUT",
         headers: {
-          "x-access-token": jwtToken,
+          'x-access-token': jwtToken,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ ...user, ...formData }),
       });
@@ -48,10 +60,9 @@ export default function AboutSection() {
       }
 
       // Adjust type according to your API response shape
-      const data: { success: boolean; message?: string } = await res.json();
-      console.log("Profile updated:", data);
+      const result: { data: Profile; message?: string } = await res.json();
 
-      user && setUser({ ...user, ...formData });
+      user && setUser(result.data);
       setIsEditing(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -95,7 +106,7 @@ export default function AboutSection() {
             {user?.gender || "Male"}
           </p>
           <p>
-            <span className="font-medium text-gray-500">Birthday:</span> {user?.birthday}
+            <span className="font-medium text-gray-500">Birthday:</span> {formatToDDMMYYYY(user?.birthday)}
           </p>
           <p>
             <span className="font-medium text-gray-500">Horoscope:</span> {user?.horoscope}
@@ -148,9 +159,9 @@ export default function AboutSection() {
             <input
               type="text"
               name="birthday"
-              value={formData.birthday}
+              value={formatToDDMMYYYY(formData.birthday)}
               onChange={handleChange}
-              placeholder="DD MM YYYY"
+              placeholder="DD/MM/YYYY"
               className=" flex-1 w-full px-3 py-2 rounded-md bg-gray-800 text-white border border-gray-700"
             />
           </div>

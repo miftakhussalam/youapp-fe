@@ -3,10 +3,22 @@
 import { ChevronLeft, PencilLine, X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useState } from "react";
+import { formatToDDMMYYYY } from "@/libs/timeFormat";
 
 interface InterestSectionProps {
   editInterest: boolean;
   setEditInterest: (edit: boolean) => void;
+}
+
+interface Profile {
+  email: string;
+  username: string;
+  nama?: string;
+  horoscope?: string;
+  zodiac?: string;
+  interests?: string[];
+  avatar?: string | undefined;
+  about?: string | undefined;
 }
 
 export default function InterestSection({
@@ -52,19 +64,18 @@ export default function InterestSection({
         method: "PUT",
         headers: {
           "x-access-token": jwtToken,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ ...user, interests }),
+        body: JSON.stringify({ ...user, birthday: formatToDDMMYYYY(user?.birthday), interests }),
       });
 
       if (!res.ok) {
         throw new Error(`Failed to update profile: ${res.statusText}`);
       }
 
-      // Adjust type according to your API response shape
-      const data: { success: boolean; message?: string } = await res.json();
-      console.log("Profile updated:", data);
+      const result: { data: Profile; message?: string } = await res.json();
 
-      user && setUser({ ...user, interests });
+      user && setUser(result.data);
       setEditInterest(false);
     } catch (error: unknown) {
       if (error instanceof Error) {
