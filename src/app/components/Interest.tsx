@@ -13,7 +13,7 @@ export default function InterestSection({
   editInterest,
   setEditInterest,
 }: InterestSectionProps) {
-  const { user, setUser } = useAuth();
+  const { user, setUser, token } = useAuth();
   const [interests, setInterests] = useState<string[]>(user?.interests || []);
   const [inputValue, setInputValue] = useState("");
   const removeInterest = (interest: string) => {
@@ -39,12 +39,19 @@ export default function InterestSection({
 
   const handleUpdate = async (): Promise<void> => {
     try {
+      const jwtToken = token ?? localStorage.getItem("authToken");
+
+      if (!jwtToken) {
+        console.error("No token found, redirecting to login...");
+        window.location.href = "/login"; // redirect kalau belum login
+        return;
+      }
       const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
       const res: Response = await fetch(`${BASE_URL}/api/updateProfile`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+          "x-access-token": jwtToken,
         },
         body: JSON.stringify({ ...user, interests }),
       });

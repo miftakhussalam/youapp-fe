@@ -24,6 +24,8 @@ export default function CoverProfile() {
     fileInputRef.current?.click();
   };
 
+  console.log(user);
+
   return (
     <div className="relative bg-[#162329] rounded-md">
       <Image
@@ -63,7 +65,7 @@ export default function CoverProfile() {
           )}
           {user?.horoscope && (
             <span className="px-2 py-1 bg-gray-800 rounded">
-              {user.horoscope}
+              {user?.horoscope}
             </span>
           )}
         </div>
